@@ -33,9 +33,11 @@ func main() {
 		Description: constants.HealthCheckDescription,
 	}, healthCheckHandler)
 
-	// Add get_markets tool directly using gamma handler
+	// Add gamma tools
 	mcp.AddTool(server, gamma.GetMarketsTool(), tools.RecoverPanicWrapper(gamma.GetMarketsHandler))
-	// mcp.AddTool(server, gamma.GetMarketsTool(), gamma.GetMarketsHandler)
+	mcp.AddTool(server, gamma.GetMarketByIDTool(), tools.RecoverPanicWrapper(gamma.GetMarketByIDHandler))
+	// TODO: Uncomment when GetTags is confirmed to exist
+	// mcp.AddTool(server, gamma.GetTagsTool(), tools.RecoverPanicWrapper(gamma.GetTagsHandler))
 
 	// Run the server
 	server.Run(context.Background(), &mcp.StdioTransport{})

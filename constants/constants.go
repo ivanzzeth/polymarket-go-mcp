@@ -8,14 +8,18 @@ const (
 
 // Tool names
 const (
-	ToolHealthCheck = "health_check"
-	ToolGetMarkets  = "get_markets"
+	ToolHealthCheck    = "health_check"
+	ToolGetMarkets     = "get_markets"
+	ToolGetMarketByID  = "get_market_by_id"
+	ToolGetTags        = "get_tags"
 )
 
 // Tool descriptions
 const (
-	HealthCheckDescription = "Check if the Polymarket MCP server is working"
-	GetMarketsDescription  = "Get Polymarket markets with comprehensive filtering and pagination options"
+	HealthCheckDescription   = "Check if the Polymarket MCP server is working"
+	GetMarketsDescription    = "Get Polymarket markets with comprehensive filtering and pagination options"
+	GetMarketByIDDescription = "Get a single Polymarket market by its ID"
+	GetTagsDescription       = "Get Polymarket tags with filtering options"
 )
 
 // Error messages
