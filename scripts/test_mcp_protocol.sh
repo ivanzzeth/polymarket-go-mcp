@@ -3,6 +3,24 @@
 echo "=== MCP Protocol Test Suite ==="
 echo "Testing Polymarket MCP Server..."
 
+# Cross-platform timeout function
+run_with_timeout() {
+    local timeout_duration=$1
+    shift
+    
+    if command -v timeout >/dev/null 2>&1; then
+        # Linux: use timeout
+        timeout "${timeout_duration}" "$@"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        # macOS with GNU coreutils: use gtimeout
+        gtimeout "${timeout_duration}" "$@"
+    else
+        # No timeout available, just run the command
+        # Note: This is less safe but works on macOS without coreutils
+        "$@"
+    fi
+}
+
 # Check if server binary exists
 if [ ! -f "./polymarket-go-mcp" ]; then
     echo "❌ Server binary not found. Building..."
@@ -23,7 +41,7 @@ echo "=== Test 1: Initialize and List Tools ==="
     sleep 0.5
     echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
     sleep 0.5
-} | timeout 10s ./polymarket-go-mcp 2>&1
+} | run_with_timeout 10s ./polymarket-go-mcp 2>&1
 
 if [ $? -eq 0 ]; then
     echo "✅ Test 1 passed: Server initialized and tools listed"

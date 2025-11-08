@@ -2,6 +2,24 @@
 
 echo "=== Testing get_markets Tool ==="
 
+# Cross-platform timeout function
+run_with_timeout() {
+    local timeout_duration=$1
+    shift
+    
+    if command -v timeout >/dev/null 2>&1; then
+        # Linux: use timeout
+        timeout "${timeout_duration}" "$@"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        # macOS with GNU coreutils: use gtimeout
+        gtimeout "${timeout_duration}" "$@"
+    else
+        # No timeout available, just run the command
+        # Note: This is less safe but works on macOS without coreutils
+        "$@"
+    fi
+}
+
 # Check if server binary exists
 if [ ! -f "./polymarket-go-mcp" ]; then
     echo "❌ Server binary not found. Building..."
@@ -25,7 +43,7 @@ echo "=== Test 1: get_markets with default parameters ==="
     # Call get_markets tool with default parameters
     echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_markets","arguments":{"limit":5}}}'
     sleep 2
-} | timeout 15s ./polymarket-go-mcp 2>&1
+} | run_with_timeout 15s ./polymarket-go-mcp 2>&1
 
 RESULT=$?
 if [ $RESULT -eq 0 ]; then
@@ -45,7 +63,7 @@ echo "=== Test 2: get_markets with closed markets filter ==="
     # Call get_markets tool with closed markets
     echo '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"get_markets","arguments":{"limit":3,"closed":true}}}'
     sleep 2
-} | timeout 15s ./polymarket-go-mcp 2>&1
+} | run_with_timeout 15s ./polymarket-go-mcp 2>&1
 
 RESULT=$?
 if [ $RESULT -eq 0 ]; then

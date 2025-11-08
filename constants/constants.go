@@ -3,7 +3,7 @@ package constants
 // Server constants
 const (
 	ServerName    = "polymarket-go-mcp"
-	ServerVersion = "0.1.0"
+	ServerVersion = "0.0.1"
 )
 
 // Tool names
@@ -20,13 +20,13 @@ const (
 
 // Error messages
 const (
-	ErrNoContentInResult = "no content in result"
+	ErrNoContentInResult   = "no content in result"
 	ErrExpectedTextContent = "expected text content"
-	ErrFailedToParseJSON = "failed to parse JSON"
+	ErrFailedToParseJSON   = "failed to parse JSON"
 )
 
 // Default values
 const (
-	DefaultLimit = 10
+	DefaultLimit  = 10
 	DefaultOffset = 0
 )

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ivanzzeth/polymarket-go-mcp/constants"
+	"github.com/ivanzzeth/polymarket-go-mcp/tools"
 	"github.com/ivanzzeth/polymarket-go-mcp/tools/gamma"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
@@ -11,13 +12,13 @@ import (
 // healthCheckHandler handles health check requests
 func healthCheckHandler(ctx context.Context, req *mcp.CallToolRequest, input map[string]any) (*mcp.CallToolResult, map[string]any, error) {
 	return &mcp.CallToolResult{
-		Content: []mcp.Content{
-			&mcp.TextContent{Text: `{"status": "healthy", "message": "Polymarket MCP Server is running"}`},
-		},
-	}, map[string]any{
-		"status":  "healthy",
-		"message": "Polymarket MCP Server is running",
-	}, nil
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: `{"status": "healthy", "message": "Polymarket MCP Server is running"}`},
+			},
+		}, map[string]any{
+			"status":  "healthy",
+			"message": "Polymarket MCP Server is running",
+		}, nil
 }
 
 func main() {
@@ -33,7 +34,8 @@ func main() {
 	}, healthCheckHandler)
 
 	// Add get_markets tool directly using gamma handler
-	mcp.AddTool(server, gamma.GetMarketsTool(), gamma.GetMarketsHandler)
+	mcp.AddTool(server, gamma.GetMarketsTool(), tools.RecoverPanicWrapper(gamma.GetMarketsHandler))
+	// mcp.AddTool(server, gamma.GetMarketsTool(), gamma.GetMarketsHandler)
 
 	// Run the server
 	server.Run(context.Background(), &mcp.StdioTransport{})
