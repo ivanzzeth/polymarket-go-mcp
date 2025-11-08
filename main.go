@@ -14,7 +14,7 @@ import (
 func healthCheckHandler(ctx context.Context, req *mcp.CallToolRequest, input map[string]any) (*mcp.CallToolResult, map[string]any, error) {
 	return &mcp.CallToolResult{
 			Content: []mcp.Content{
-				&mcp.TextContent{Text: `{"status": "healthy", "message": "Polymarket MCP Server is running"}`},
+				&mcp.TextContent{Text: `{"status": "healthy", "message": "Polymarket Go MCP Server is running"}`},
 			},
 		}, map[string]any{
 			"status":  "healthy",
