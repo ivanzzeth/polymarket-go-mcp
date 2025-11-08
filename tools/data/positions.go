@@ -36,7 +36,7 @@ func GetPositionsTool() *mcp.Tool {
 				},
 				"user": map[string]any{
 					"type":        "string",
-					"description": "Filter by user address",
+					"description": "Filter by user address (Required: User Profile Address 0x-prefixed, 40 hex chars)",
 				},
 				"market": map[string]any{
 					"type":        "string",
@@ -47,6 +47,7 @@ func GetPositionsTool() *mcp.Tool {
 					"description": "Filter by type (CASH, etc.)",
 				},
 			},
+			"required": []string{"user"},
 		},
 	}
 }
@@ -107,13 +108,14 @@ func GetClosedPositionsTool() *mcp.Tool {
 				},
 				"user": map[string]any{
 					"type":        "string",
-					"description": "Filter by user address",
+					"description": "Filter by user address (Required: User Profile Address 0x-prefixed, 40 hex chars)",
 				},
 				"market": map[string]any{
 					"type":        "string",
 					"description": "Filter by market ID",
 				},
 			},
+			"required": []string{"user"},
 		},
 	}
 }
@@ -174,9 +176,10 @@ func GetPositionsValueTool() *mcp.Tool {
 				},
 				"user": map[string]any{
 					"type":        "string",
-					"description": "Filter by user address",
+					"description": "Filter by user address (Required: User Profile Address 0x-prefixed, 40 hex chars)",
 				},
 			},
+			"required": []string{"user"},
 		},
 	}
 }

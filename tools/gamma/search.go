@@ -18,7 +18,7 @@ func SearchTool() *mcp.Tool {
 		InputSchema: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
-				"query": map[string]any{
+				"q": map[string]any{
 					"type":        "string",
 					"description": "Search query string",
 				},
@@ -43,7 +43,7 @@ func SearchTool() *mcp.Tool {
 					"description": "Include closed content",
 				},
 			},
-			"required": []string{"query"},
+			"required": []string{"q"},
 		},
 	}
 }

@@ -36,7 +36,7 @@ func GetActivityTool() *mcp.Tool {
 				},
 				"user": map[string]any{
 					"type":        "string",
-					"description": "Filter by user address",
+					"description": "Filter by user address (Required: User Profile Address 0x-prefixed, 40 hex chars)",
 				},
 				"market": map[string]any{
 					"type":        "string",
@@ -55,6 +55,7 @@ func GetActivityTool() *mcp.Tool {
 					"description": "End date filter (ISO 8601)",
 				},
 			},
+			"required": []string{"user"},
 		},
 	}
 }
