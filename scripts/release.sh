@@ -60,8 +60,16 @@ update_version() {
     # Remove 'v' prefix for the constants file
     local version_without_v=${new_version#v}
     
+    # Debug: show what we're looking for
+    print_info "Looking for version pattern in constants/constants.go"
+    grep -n "Version" constants/constants.go
+    
     # Update the version in constants file
     sed -i "s/Version = \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/Version = \"$version_without_v\"/" constants/constants.go
+    
+    # Debug: show the updated file
+    print_info "Updated constants/constants.go:"
+    grep -n "Version" constants/constants.go
     
     # Verify the update
     local updated_version=$(get_current_version)
@@ -69,6 +77,8 @@ update_version() {
         print_success "Version updated successfully in constants/constants.go"
     else
         print_error "Failed to update version. Expected: $new_version, Got: $updated_version"
+        print_error "Current file content:"
+        grep "Version" constants/constants.go
         exit 1
     fi
 }
