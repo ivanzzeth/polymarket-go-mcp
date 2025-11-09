@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+      - dev
   workflow_dispatch:  # Allow manual triggering
 
 permissions:

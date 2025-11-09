@@ -199,10 +199,19 @@ $release_message"
     
 $release_message"
     
+    # Switch to main branch and merge changes
+    print_info "Switching to main branch and merging changes..."
+    git checkout main
+    git merge dev --no-ff -m "Merge dev branch for release $new_version"
+    
     # Push changes and tag to remote repository
     print_info "Pushing changes and tag to remote repository..."
     git push origin main
     git push origin "$new_version"
+    
+    # Switch back to dev branch
+    print_info "Switching back to dev branch..."
+    git checkout dev
     
     print_success "Release preparation completed and pushed to remote!"
     print_info ""
