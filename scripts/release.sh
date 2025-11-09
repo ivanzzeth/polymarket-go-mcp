@@ -65,7 +65,7 @@ update_version() {
     grep -n "Version" constants/constants.go
     
     # Update the version in constants file
-    sed -i "s/Version = \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/Version = \"$version_without_v\"/" constants/constants.go
+    sed -i "s/Version    = \"[0-9]\+\.[0-9]\+\.[0-9]\+\"/Version    = \"$version_without_v\"/" constants/constants.go
     
     # Debug: show the updated file
     print_info "Updated constants/constants.go:"
