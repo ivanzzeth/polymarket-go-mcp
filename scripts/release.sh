@@ -199,17 +199,20 @@ $release_message"
     
 $release_message"
     
-    print_success "Release preparation completed!"
+    # Push changes and tag to remote repository
+    print_info "Pushing changes and tag to remote repository..."
+    git push origin main
+    git push origin "$new_version"
+    
+    print_success "Release preparation completed and pushed to remote!"
     print_info ""
-    print_info "Next steps:"
-    print_info "1. Review the changes: git log --oneline -n 3"
-    print_info "2. Push the changes: git push origin main"
-    print_info "3. Push the tag: git push origin $new_version"
-    print_info ""
-    print_info "After pushing the tag, GitHub Actions will automatically:"
+    print_info "GitHub Actions will now automatically:"
     print_info "- Build binaries for all platforms"
     print_info "- Create a GitHub Release"
     print_info "- Upload pre-built binaries"
+    print_info ""
+    print_info "You can monitor the progress at:"
+    print_info "https://github.com/ivanzzeth/polymarket-go-mcp/actions"
 }
 
 # Function to show usage
