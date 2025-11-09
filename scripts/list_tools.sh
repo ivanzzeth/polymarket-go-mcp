@@ -1,7 +1,6 @@
 #!/bin/bash
 
-echo "=== MCP Protocol Test Suite ==="
-echo "Testing Polymarket MCP Server..."
+echo "=== Listing All Available MCP Tools ==="
 
 # Cross-platform timeout function
 run_with_timeout() {
@@ -32,23 +31,29 @@ if [ ! -f "./polymarket-go-mcp" ]; then
 fi
 
 echo "✅ Server binary ready"
-
-# Test 1: Initialize and list tools
 echo ""
-echo "=== Test 1: Initialize and List Tools ==="
-{
-    echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{"roots":{"listChanged":true},"tools":{"listChanged":true}},"clientInfo":{"name":"test-client","version":"1.0.0"}}}'
-    sleep 0.5
-    echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-    sleep 0.5
-} | run_with_timeout 10s ./polymarket-go-mcp 2>&1
 
-if [ $? -eq 0 ]; then
-    echo "✅ Test 1 passed: Server initialized and tools listed"
+# List all tools
+echo "=== Available Tools ==="
+OUTPUT=$({
+    # Initialize
+    echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{"roots":{"listChanged":true},"tools":{"listChanged":true}},"clientInfo":{"name":"tool-lister","version":"1.0.0"}}}'
+    sleep 0.5
+    
+    # List tools
+    echo '{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+    sleep 1
+} | run_with_timeout 10s ./polymarket-go-mcp 2>&1)
+
+# Extract and format the tools list
+if command -v jq >/dev/null 2>&1; then
+    # Use jq to format JSON nicely
+    echo "$OUTPUT" | grep '"result"' | jq -r '.result.tools[] | "  • \(.name): \(.description)"' 2>/dev/null || echo "$OUTPUT" | grep -A 1000 '"result"'
 else
-    echo "❌ Test 1 failed"
-    exit 1
+    # Fallback: just show the raw JSON result
+    echo "$OUTPUT" | grep -A 1000 '"result"'
 fi
 
 echo ""
-echo "=== All MCP Protocol Tests Completed ==="
+echo "=== Tool Listing Completed ==="
+

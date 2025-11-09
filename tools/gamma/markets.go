@@ -3,9 +3,10 @@ package gamma
 import (
 	"context"
 	"encoding/json"
-	"net/http"
+	"fmt"
 
-	"github.com/ivanzzeth/polymarket-go-gamma-client"
+	polymarketgamma "github.com/ivanzzeth/polymarket-go-gamma-client"
+	"github.com/ivanzzeth/polymarket-go-mcp/client"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
@@ -13,7 +14,7 @@ import (
 func GetMarketsTool() *mcp.Tool {
 	return &mcp.Tool{
 		Name:        "get_markets",
-		Description: "Get Polymarket markets with comprehensive filtering and pagination options",
+		Description: "Get Polymarket gamma markets with comprehensive filtering and pagination options",
 		InputSchema: map[string]any{
 			"type": "object",
 			"properties": map[string]any{
@@ -35,27 +36,27 @@ func GetMarketsTool() *mcp.Tool {
 				},
 				"id": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "number"},
+					"items":       map[string]any{"type": "number"},
 					"description": "Filter by market IDs",
 				},
 				"slug": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by market slugs",
 				},
 				"clob_token_ids": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by CLOB token IDs",
 				},
 				"condition_ids": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by condition IDs",
 				},
 				"market_maker_address": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by market maker addresses",
 				},
 				"liquidity_num_min": map[string]any{
@@ -112,7 +113,7 @@ func GetMarketsTool() *mcp.Tool {
 				},
 				"sports_market_types": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by sports market types",
 				},
 				"rewards_min_size": map[string]any{
@@ -121,7 +122,7 @@ func GetMarketsTool() *mcp.Tool {
 				},
 				"question_ids": map[string]any{
 					"type":        "array",
-					"items": map[string]any{"type": "string"},
+					"items":       map[string]any{"type": "string"},
 					"description": "Filter by question IDs",
 				},
 				"include_tag": map[string]any{
@@ -143,23 +144,96 @@ func GetMarketsHandler(ctx context.Context, req *mcp.CallToolRequest, args map[s
 	var params polymarketgamma.GetMarketsParams
 	argsBytes, _ := json.Marshal(args)
 	if err := json.Unmarshal(argsBytes, &params); err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to parse arguments: %w", err)
 	}
 
-	// Create Gamma client with proper HTTP client
-	client := polymarketgamma.NewClient(&http.Client{})
-	
-	markets, err := client.GetMarkets(ctx, &params)
+	// Get client
+	gammaClient := client.GetGammaClient()
+
+	markets, err := gammaClient.GetMarkets(ctx, &params)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("failed to get markets: %w", err)
 	}
 
 	// Format response
-	marketsJSON, _ := json.MarshalIndent(markets, "", "  ")
-	
+	marketsJSON, err := json.MarshalIndent(markets, "", "  ")
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal markets: %w", err)
+	}
+
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{
 			&mcp.TextContent{Text: string(marketsJSON)},
 		},
 	}, markets, nil
+}
+
+// GetMarketByIDTool returns the MCP tool definition for getting a market by ID
+func GetMarketByIDTool() *mcp.Tool {
+	return &mcp.Tool{
+		Name:        "get_market_by_id",
+		Description: "Get a single Polymarket market by its ID",
+		InputSchema: map[string]any{
+			"type": "object",
+			"properties": map[string]any{
+				"id": map[string]any{
+					"type":        "string",
+					"description": "The market ID to retrieve",
+				},
+			},
+			"required": []string{"id"},
+		},
+	}
+}
+
+// GetMarketByIDHandler handles the get_market_by_id tool execution
+func GetMarketByIDHandler(ctx context.Context, req *mcp.CallToolRequest, args map[string]any) (*mcp.CallToolResult, any, error) {
+	// Parse arguments
+	id, ok := args["id"].(string)
+	if !ok {
+		return nil, nil, fmt.Errorf("id parameter is required and must be a string")
+	}
+
+	// Parse query parameters if provided (excluding id)
+	var params *polymarketgamma.GetMarketByIDQueryParams
+	if len(args) > 1 {
+		// Create a copy of args without id
+		queryArgs := make(map[string]any)
+		for k, v := range args {
+			if k != "id" {
+				queryArgs[k] = v
+			}
+		}
+		if len(queryArgs) > 0 {
+			argsBytes, _ := json.Marshal(queryArgs)
+			if err := json.Unmarshal(argsBytes, &params); err != nil {
+				return nil, nil, fmt.Errorf("failed to parse query parameters: %w", err)
+			}
+		} else {
+			params = &polymarketgamma.GetMarketByIDQueryParams{}
+		}
+	} else {
+		params = &polymarketgamma.GetMarketByIDQueryParams{}
+	}
+
+	// Get client
+	gammaClient := client.GetGammaClient()
+
+	// Get market by ID
+	market, err := gammaClient.GetMarketByID(ctx, id, params)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to get market by ID: %w", err)
+	}
+
+	// Format response
+	marketJSON, err := json.MarshalIndent(market, "", "  ")
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to marshal market: %w", err)
+	}
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{Text: string(marketJSON)},
+		},
+	}, market, nil
 }
