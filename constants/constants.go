@@ -2,16 +2,16 @@ package constants
 
 // Server constants
 const (
-	ServerName    = "polymarket-go-mcp"
-	ServerVersion = "0.0.1"
+	ServerName = "polymarket-go-mcp"
+	Version    = "0.0.0"
 )
 
 // Tool names
 const (
-	ToolHealthCheck    = "health_check"
-	ToolGetMarkets     = "get_markets"
-	ToolGetMarketByID  = "get_market_by_id"
-	ToolGetTags        = "get_tags"
+	ToolHealthCheck   = "health_check"
+	ToolGetMarkets    = "get_markets"
+	ToolGetMarketByID = "get_market_by_id"
+	ToolGetTags       = "get_tags"
 )
 
 // Tool descriptions

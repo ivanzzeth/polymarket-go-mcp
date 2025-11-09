@@ -25,7 +25,7 @@ func healthCheckHandler(ctx context.Context, req *mcp.CallToolRequest, input map
 func main() {
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    constants.ServerName,
-		Version: constants.ServerVersion,
+		Version: constants.Version,
 	}, nil)
 
 	// Add health check tool
