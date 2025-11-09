@@ -3,7 +3,7 @@ package constants
 // Server constants
 const (
 	ServerName = "polymarket-go-mcp"
-	Version    = "0.0.3"
+	Version    = "0.0.4"
 )
 
 // Tool names
