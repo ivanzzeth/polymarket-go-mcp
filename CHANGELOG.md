@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## v0.0.4 - 2025-11-09
+
+### Added
+- Add npx-style runner and environment variable support
+
+
 ## v0.0.3 - 2025-11-09
 
 ### Added
